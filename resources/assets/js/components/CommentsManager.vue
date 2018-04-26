@@ -1,23 +1,26 @@
 <template>
-    <div>
-        <div>
-            <div>
-                <h2>Comments</h2>
+    <div class="max-w-3xl mx-auto">
+        <div class="bg-white rounded shadow-sm p-8 mb-4">
+            <div class="mb-4">
+                <h2 class="text-black">Comments</h2>
             </div>
             <textarea v-model="data.body"
                       placeholder="Add a comment"
-                      class="border">
+                      class="bg-grey-lighter rounded leading-normal resize-none w-full py-2 px-3"
+                      :class="[state === 'editing' ? 'h-24' : 'h-10']"
+                      @focus="startEditing">
             </textarea>
-            <div>
-                <button @click="saveComment">Save</button>
-                <button>Cancel</button>
+            <div v-show="state === 'editing'" class="mt-3">
+                <button class="border border-blue bg-blue text-white hover:bg-blue-dark py-2 px-4 rounded tracking-wide mr-1" @click="saveComment">Save</button>
+                <button class="border border-grey-darker text-grey-darker hover:bg-grey-dark hover:text-white py-2 px-4 rounded tracking-wide ml-1" @click="stopEditing">Cancel</button>
             </div>
         </div>
-        <div>
-            <comment v-for="comment in comments"
+        <div class="bg-white rounded shadow-sm p-8">
+            <comment v-for="(comment, index) in comments"
                      :key="comment.id"
                      :user="user"
                      :comment="comment"
+                     :class="[index === comments.length - 1 ? '' : 'mb-6']"
                      @comment-updated="updateComment($event)"
                      @comment-deleted="deleteComment($event)">
             </comment>
@@ -39,6 +42,7 @@
         },
         data: function() {
             return {
+                state: 'default',
                 data: {
                     body: ''
                 },
@@ -67,6 +71,13 @@
             }
         },
         methods: {
+            startEditing() {
+                this.state = 'editing';
+            },
+            stopEditing() {
+                this.state = 'default';
+                this.data.body = '';
+            },
             updateComment($event) {
                 let index = this.comments.findIndex((element) => {
                     return element.id === $event.id;
@@ -95,7 +106,7 @@
 
                 this.comments.push(newComment);
 
-                this.data.body = '';
+                this.stopEditing();
             }
         }
     }

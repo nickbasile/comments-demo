@@ -226,6 +226,10 @@ module.exports = {
       'Liberation Mono',
       'Courier New',
       'monospace',
+    ],
+    'nunito': [
+        'Nunito',
+        'sans-serif',
     ]
   },
 
