@@ -48,7 +48,7 @@
         },
         computed: {
             editable() {
-                return this.user.id === this.comment.id;
+                return this.user.id === this.comment.author.id;
             },
         },
         methods: {
