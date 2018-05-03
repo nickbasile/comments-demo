@@ -56,7 +56,6 @@ class CommentController extends Controller
         ]);
 
         $comment->body = $data['body'];
-        $comment->edited = true;
 
         $comment->save();
 

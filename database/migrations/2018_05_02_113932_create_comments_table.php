@@ -17,7 +17,6 @@ class CreateCommentsTable extends Migration
             $table->increments('id');
             $table->integer('user_id');
             $table->longText('body');
-            $table->boolean('edited')->default(0);
             $table->timestamps();
         });
     }

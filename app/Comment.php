@@ -8,12 +8,10 @@ class Comment extends Model
 {
     protected $fillable = [
         'body',
-        'edited',
         'user_id',
     ];
 
     protected $casts = [
-        'edited' => 'boolean',
         'user_id' => 'integer',
     ];
 
