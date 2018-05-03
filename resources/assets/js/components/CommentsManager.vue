@@ -46,29 +46,11 @@
                 data: {
                     body: ''
                 },
-                comments: [
-                    {
-                        id: 1,
-                        body: "How's it going?",
-                        edited: false,
-                        created_at: new Date().toLocaleString(),
-                        author: {
-                            id: 1,
-                            name: 'Nick Basile',
-                        }
-                    },
-                    {
-                        id: 2,
-                        body: "Pretty good. Just making a painting.",
-                        edited: false,
-                        created_at: new Date().toLocaleString(),
-                        author: {
-                            id: 2,
-                            name: 'Bob Ross',
-                        }
-                    }
-                ]
+                comments: []
             }
+        },
+        created() {
+            this.fetchComments();
         },
         methods: {
             startEditing() {
@@ -78,35 +60,44 @@
                 this.state = 'default';
                 this.data.body = '';
             },
-            updateComment($event) {
-                let index = this.comments.findIndex((element) => {
-                    return element.id === $event.id;
-                });
+            fetchComments() {
+                const t = this;
 
-                this.comments[index].body = $event.body;
+                axios.get('/comments')
+                    .then(({data}) => {
+                        t.comments = data;
+                    })
+            },
+            updateComment($event) {
+                const t = this;
+
+                axios.put(`/comments/${$event.id}`, $event)
+                    .then(({data}) => {
+                        t.comments[t.commentIndex($event.id)].body = data.body;
+                    })
             },
             deleteComment($event) {
-                let index = this.comments.findIndex((element) => {
-                    return element.id === $event.id;
-                });
+                const t = this;
 
-                this.comments.splice(index, 1);
+                axios.delete(`/comments/${$event.id}`, $event)
+                    .then(() => {
+                        t.comments.splice(t.commentIndex($event.id), 1);
+                    })
             },
             saveComment() {
-                let newComment = {
-                    id: this.comments[this.comments.length - 1].id + 1,
-                    body: this.data.body,
-                    edited: false,
-                    created_at: new Date().toLocaleString(),
-                    author: {
-                        id: this.user.id,
-                        name: this.user.name,
-                    }
-                }
+                const t = this;
 
-                this.comments.push(newComment);
+                axios.post('/comments', t.data)
+                    .then(({data}) => {
+                        t.comments.unshift(data);
 
-                this.stopEditing();
+                        t.stopEditing();
+                    })
+            },
+            commentIndex(commentId) {
+                return this.comments.findIndex((element) => {
+                    return element.id === commentId;
+                });
             }
         }
     }
